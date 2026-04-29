@@ -14,11 +14,18 @@ This project implements a **Mini Tensor Processing Unit (Mini-TPU)** on the **Ti
 ## 🔍 Project Overview
 
 The Mini-TPU is designed for **educational** and **exploratory** purposes. Despite the severe area constraints (~160µm × 100µm), it demonstrates:
+
 - A fully functional 4×4 **systolic array** of 8-bit MAC units
 - An **output-stationary dataflow**
 - Custom instruction set (`LOAD`, `RUN`, `STORE`)
 - **On-chip dual memory banks** for activations and weights
 - A lightweight **control**
+
+---
+
+## 🎬 Workshop Goal
+
+Optimise this Mini-TPU to fit in the TT Tile of 160x100um^2
 
 ---
 
@@ -35,13 +42,8 @@ The Mini-TPU is designed for **educational** and **exploratory** purposes. Despi
 ## 🧪 Verification
 
 We used a combination of:
+
 - `SystemVerilog` + **constraint-random tests**
 - `Cocotb` + Python **testbench and reference model**
-- FPGA emulation on **Nexys A7-100T**
 
 ✅ All modules and system-level simulation passed.
-
-## 🎬 Demo & Resources
-
-- ▶️ **[Project Video](https://youtu.be/X8vROCTOxMI)**
-- 📂 **[GitHub Codebase](https://github.com/RickGao/Mini-TPU)**
