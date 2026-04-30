@@ -5,6 +5,7 @@
 `timescale 1ns/1ps
 `define DATA_WIDTH 4
 `define ACC_WIDTH  4
+`define INST_WIDTH 12
 `define N 3
 `define NN 9                   // N*N
 
@@ -12,8 +13,11 @@ module tpu (
     input wire clk,
     input wire rst_n,
 
-    input wire  [15:0] instruction,
-    output wire [7:0]  result   // upper bits zero-padded
+    input wire  [`INST_WIDTH-1:0] instruction,
+    output wire ready_to_send,
+    output wire [7:0]  result,   // upper bits zero-padded
+    output wire [`ACC_WIDTH*`NN-1:0]  array_data_out
+
 );
 
     wire [`DATA_WIDTH-1:0] mema_data_in;
@@ -33,7 +37,6 @@ module tpu (
     wire                       array_write_enable;
     wire [`DATA_WIDTH*`N-1:0]  array_a_in;
     wire [`DATA_WIDTH*`N-1:0]  array_b_in;
-    wire [`ACC_WIDTH*`NN-1:0]  array_data_out;
     wire [1:0]                 array_output_row;
     wire [1:0]                 array_output_col;
 
@@ -69,7 +72,8 @@ module tpu (
         .mema_read_elem(mema_read_elem),
 
         .memb_read_enable(memb_read_enable),
-        .memb_read_elem(memb_read_elem)
+        .memb_read_elem(memb_read_elem),
+        .ready_to_send(ready_to_send)
     );
 
     memory memory_a (

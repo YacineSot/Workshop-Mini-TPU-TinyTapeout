@@ -29,8 +29,8 @@ DIE_AREA: [0, 0, 160, 100]
 # Tight margin to maximize placeable area (pins extend 1 um into the core).
 CORE_AREA: [1, 1, 159, 99]
 
-IO_PIN_H_LENGTH: 1
-IO_PIN_V_LENGTH: 1
+IO_PIN_H_LENGTH: 2
+IO_PIN_V_LENGTH: 2
 
 # ---------- Synthesis: aggressive area mapping ----------
 SYNTH_STRATEGY: "AREA 0"
