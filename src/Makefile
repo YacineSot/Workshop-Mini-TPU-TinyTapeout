@@ -1,14 +1,16 @@
 # Specify the simulator
-SIM ?= icarus  # Default to Icarus Verilog
+SIM ?= verilator  # Default to Icarus Verilog
 
 # Verilog source file
-VERILOG_SOURCES = tt_um_tpu.v tpu.v control.v array.v memory.v pe.v
+VERILOG_SOURCES = tpu_interface_tb.v tpu_interface.v spi.v tpu.v control.v array.v memory.v pe.v
 
 # Top-level module in Verilog
-TOPLEVEL = tt_um_tpu
+TOPLEVEL = tpu_interface_tb
 
 # Python test module
-MODULE = tpu_tb
+MODULE = tpu_interface_tb
+
+EXTRA_ARGS += --trace --trace-structs
 
 # Include Cocotb makefile rules
 include $(shell cocotb-config --makefiles)/Makefile.sim

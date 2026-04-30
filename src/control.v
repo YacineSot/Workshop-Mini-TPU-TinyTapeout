@@ -3,12 +3,13 @@
 // signals are computed once and broadcast.
 
 `define DATA_WIDTH 4
+`define INST_LEN 12
 `define N 3
 
 module control (
     input wire clk,
     input wire rst_n,
-    input wire [15:0] instruction,
+    input wire [`INST_LEN-1:0] instruction,
 
     output wire array_write_enable,
     output wire [1:0] array_output_row,
@@ -28,17 +29,18 @@ module control (
     output wire [`N*2-1:0] mema_read_elem,
 
     output wire [`N-1:0]   memb_read_enable,
-    output wire [`N*2-1:0] memb_read_elem
+    output wire [`N*2-1:0] memb_read_elem,
+    output reg ready_to_send
 );
 
     // Counter holds enough range for the longest matmul drain time.
     // Total useful range is 1 .. 2N (inclusive), so 4 bits is plenty.
     reg [3:0] counter;
 
-    wire [1:0] opcode     = instruction[15:14];
-    wire       mem_select = instruction[13];
-    wire [1:0] row        = instruction[11:10];
-    wire [1:0] col        = instruction[9:8];
+    wire [1:0] opcode     = instruction[`INST_LEN-1:`INST_LEN-2];
+    wire       mem_select = instruction[`INST_LEN-3];
+    wire [1:0] row        = instruction[`INST_LEN-5:`INST_LEN-6];
+    wire [1:0] col        = instruction[`INST_LEN-7:`INST_LEN-8];
     wire [`DATA_WIDTH-1:0] imm = instruction[`DATA_WIDTH-1:0];
 
     localparam LOAD  = 2'b10;
@@ -46,14 +48,23 @@ module control (
     localparam RUN   = 2'b01;
 
     wire is_load  = (opcode == LOAD);
-    wire is_run   = (opcode == RUN);
+    wire is_run   = (opcode == RUN || counter > 0);
     wire is_store = (opcode == STORE);
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n)
+        begin
             counter <= 4'd0;
+            ready_to_send <= 0;
+        end
+        else if (counter == 2*`N + 1) begin
+            counter <= 0;
+            ready_to_send <= 1;
+        end
         else if (is_run)
             counter <= counter + 1'b1;
+        else
+            ready_to_send <= 0;
     end
 
     // ------------------------------------------------------------------
