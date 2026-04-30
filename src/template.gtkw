@@ -1,0 +1,48 @@
+[*]
+[*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
+[*] Thu Apr 30 21:45:32 2026
+[*]
+[dumpfile] "/mnt/d/PHD/WorkShop/Workshop-Mini-TPU-TinyTapeout/src/tpu_interface_tb.vcd"
+[dumpfile_mtime] "Thu Apr 30 21:28:53 2026"
+[dumpfile_size] 4051396
+[savefile] "/mnt/d/PHD/WorkShop/Workshop-Mini-TPU-TinyTapeout/src/template.gtkw"
+[timestart] 48201
+[size] 1920 983
+[pos] -1 -1
+*-5.793111 48342 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tpu_interface_tb.
+[treeopen] tpu_interface_tb.uut_tpu_interface.
+[treeopen] tpu_interface_tb.uut_tpu_interface.uut_tpu.
+[treeopen] tpu_interface_tb.uut_tpu_interface.uut_tpu.memory_a.
+[sst_width] 284
+[signals_width] 254
+[sst_expanded] 1
+[sst_vpaned_height] 289
+@28
+tpu_interface_tb.clk
+@24
+[color] 5
+tpu_interface_tb.uut_tpu_interface.result[7:0]
+@28
+tpu_interface_tb.uut_tpu_interface.uut_spi.data_buffer_output[15:0]
+@22
+tpu_interface_tb.uut_tpu_interface.uut_tpu.array_inst.data_out[71:0]
+@28
+tpu_interface_tb.uut_tpu_interface.uut_spi.cs
+@29
+tpu_interface_tb.uut_tpu_interface.uut_spi.miso
+@24
+tpu_interface_tb.uut_tpu_interface.uut_spi.output_data_bit_counter[6:0]
+@22
+tpu_interface_tb.uut_tpu_interface.uut_spi.data_in[71:0]
+@28
+tpu_interface_tb.uut_tpu_interface.uut_spi.sclk
+tpu_interface_tb.uut_tpu_interface.uut_spi.ready_to_send
+tpu_interface_tb.uut_tpu_interface.uut_spi.cs
+tpu_interface_tb.uut_tpu_interface.uut_spi.is_sending
+tpu_interface_tb.uut_tpu_interface.uut_tpu.control_unit.mema_write_enable
+@22
+[color] 1
+tpu_interface_tb.uut_tpu_interface.uut_tpu.control_unit.counter[3:0]
+[pattern_trace] 1
+[pattern_trace] 0
