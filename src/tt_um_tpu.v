@@ -15,30 +15,27 @@ module tt_um_tpu (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-    // Bidirectional Pins All Input
-    assign uio_oe[7:0]  = 8'b00000000;
 
-    // Assigned All Pins
-    assign uio_out = 0;
-    wire _unused = &{ena, 1'b0};
-   
-    // Input and Output of TPU
-    wire [15:0] instruction;
-    wire [7:0]  result;
+assign uio_oe[0] = 1; // Enable MISO output
+assign uio_oe[7:1] = 0; // Disable other outputs
 
-    // Connect pin to instruction
-    assign instruction [7:0]  = ui_in [7:0];    // Lower 8 bits are Input pins
-    assign instruction [15:8] = uio_in [7:0];   // Upper 8 bits are IO pins
+assign uio_out[7:1] = 0; // Set unused outputs to 0
 
-    // TPU
-    tpu tpu_inst (
-        .clk        (clk),
-        .rst_n      (rst_n),
-        .instruction(instruction),
-        .result     (result)
-    );
 
-    assign uo_out  = result;
+tpu_interface uut_tpu_interface(
+    .clk(clk),
+    .rst_n(rst_n),
+    
+    // spi pins
+    .mosi(ui_in[0]), // Assuming MOSI is connected to uio_in[0]
+    .cs(ui_in[1]),   // Assuming CS is connected to uio_in[1]
+    .sclk(ui_in[2]), // Assuming SCLK is connected to uio_in[2]
 
+    .miso(uio_out[0]), // Assuming MISO is connected to uio_out[0]
+
+    // tpu wire
+    .result(uo_out)
+);
+wire _unused = &{ui_in[7:3], uio_in[7:0], ena}; // Prevent unused signal warnings
 
 endmodule

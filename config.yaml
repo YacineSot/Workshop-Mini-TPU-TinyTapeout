@@ -1,0 +1,65 @@
+# LibreLane configuration for the Mini-TPU
+# Targets a single TinyTapeout (Skywater shuttle) tile of 160 x 100 um.
+# Run from inside the librelane nix-shell:
+#   cd /mnt/fda14e36-49c8-4508-a4b0-f37189565cd9/Base/VLSI_DESIGN/librelane
+#   nix-shell
+#   librelane /mnt/fda14e36-49c8-4508-a4b0-f37189565cd9/Base/Workshop_2026/Mini-TPU/config.yaml
+
+# ---------- Basics ----------
+DESIGN_NAME: tt_um_tpu
+PDK: sky130A
+
+VERILOG_FILES:
+  - dir::src/tt_um_tpu.v
+  - dir::src/tpu_interface.v
+  - dir::src/tpu.v
+  - dir::src/control.v
+  - dir::src/memory.v
+  - dir::src/array.v
+  - dir::src/pe.v
+  - dir::src/spi.v
+
+# ---------- Clock ----------
+# Loose enough that hold/setup don't force heavy buffering. The TT pin
+# advertises 1 MHz; 50 ns (20 MHz) is still 20x faster than spec.
+CLOCK_PORT: clk
+CLOCK_PERIOD: 20
+
+# ---------- Floorplan: absolute 160 x 100 um TT 1x1 tile ----------
+FP_SIZING: absolute
+DIE_AREA: [0, 0, 160, 100]
+# Tight margin to maximize placeable area (pins extend 1 um into the core).
+CORE_AREA: [1, 1, 159, 99]
+
+IO_PIN_H_LENGTH: 2
+IO_PIN_V_LENGTH: 2
+
+# ---------- Synthesis: aggressive area mapping ----------
+SYNTH_STRATEGY: "AREA 0"
+SYNTH_ABC_BUFFERING: false
+
+# Leave plenty of headroom for CTS buffers — DPL needs space to legalize.
+FP_CORE_UTIL: 45
+PL_TARGET_DENSITY_PCT: 75
+
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.0
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.0
+
+# Don't add output buffers on package-pin outputs — TT pads handle drive.
+DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: false
+
+# ---------- Power grid (TT macro: lower layers only, no rings) ----------
+PDN_MULTILAYER: false
+RT_MAX_LAYER: met4
+PDN_VPITCH: 38.87
+
+# ---------- Routing: allow some congestion since the tile is dense ----------
+GRT_ALLOW_CONGESTION: true
+
+# ---------- Signoff trims ----------
+RUN_KLAYOUT_XOR: false
+RUN_KLAYOUT_DRC: true
+
+# Magic LEF: pin-only export (matches TT integration expectations)
+MAGIC_DEF_LABELS: false
+MAGIC_WRITE_LEF_PINONLY: true
