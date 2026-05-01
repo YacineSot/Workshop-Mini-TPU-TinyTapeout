@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.3.121 (w)1999-2024 BSI
-[*] Fri May  1 01:09:04 2026
+[*] Fri May  1 01:53:15 2026
 [*]
 [dumpfile] "/mnt/d/PHD/WorkShop/Workshop-Mini-TPU-TinyTapeout/src/tpu_interface_tb.vcd"
-[dumpfile_mtime] "Fri May  1 01:07:53 2026"
-[dumpfile_size] 5427210
+[dumpfile_mtime] "Fri May  1 01:52:49 2026"
+[dumpfile_size] 4257610
 [savefile] "/mnt/d/PHD/WorkShop/Workshop-Mini-TPU-TinyTapeout/src/template.gtkw"
 [timestart] 22690
 [size] 1920 983

@@ -38,6 +38,8 @@ always @(posedge sclk or negedge rst_n) begin
         reset_data <= 0;
     end else begin
         // end
+        if (bit_counter == `INSTRUCTION_WIDTH-1)
+            bit_counter <= 0;
         if (!cs) begin
             if(is_sending) begin
                 miso <= data_in[output_data_bit_counter];
@@ -47,7 +49,8 @@ always @(posedge sclk or negedge rst_n) begin
                 // if (bit_counter == `INSTRUCTION_WIDTH) begin
                 //     bit_counter <= 0; 
                 // end else
-                bit_counter <= bit_counter + 1;
+                if (bit_counter <`INSTRUCTION_WIDTH-1)
+                    bit_counter <= bit_counter + 1;
             end
         end else begin
             bit_counter <= 0;
@@ -70,9 +73,9 @@ always @(posedge clk or negedge rst_n) begin
             is_sending <= 0;
             //output_data_bit_counter <= 0;
         end
-        if(bit_counter == `INSTRUCTION_WIDTH && !data_ready) begin
+        if(bit_counter == 0 && !data_ready) begin
             data_ready <=1; 
-            bit_counter = 0; // Reset bit counter after full instruction is received
+            //bit_counter = 0; // Reset bit counter after full instruction is received
         end else begin
             data_ready <= 0;
         end
