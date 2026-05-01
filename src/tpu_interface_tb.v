@@ -42,14 +42,14 @@ module tpu_interface_tb;
         // Simulate SPI communication
         #10 cs = 0; // Start communication
         // Send 4 bits of data (e.g., 1010)
-        for ( j = 0; j<16; j=j+1) begin
+        for ( j = 0; j<9; j=j+1) begin
             instruction = {4'b1000,j[3:0], 4'b1111};
             for(i = 0; i < `INST_WIDTH; i = i + 1) begin
                 #40 mosi = instruction[i]; sclk = 1; #40 sclk = 0; // Shift in bits
             end
         end
         #10
-        for ( j = 0; j<16; j=j+1) begin
+        for ( j = 0; j<9; j=j+1) begin
             instruction = {4'b1010,j[3:0], 4'b1010};
             for(i = 0; i < `INST_WIDTH; i = i + 1) begin
                 #40 mosi = instruction[i]; sclk = 1; #40 sclk = 0; // Shift in bits

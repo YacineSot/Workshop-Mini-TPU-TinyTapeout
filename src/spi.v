@@ -25,31 +25,38 @@ reg [$clog2(`ACC_WIDTH*`NN)-1:0] output_data_bit_counter; // Counter for bits in
 //reg [3:0] addr_counter;
 reg data_ready;
 reg is_sending;
+reg reset_data;
 
 //reg [`DATA_WIDTH-1:0] data_buffer;
 
- 
 always @(posedge sclk or negedge rst_n) begin
     if(!rst_n) begin
         data_buffer <= 0;
         bit_counter <= 0;
-        //data_ready <= 0;
         output_data_bit_counter <= 0;
         miso <= 0;
-    end else
-    if (!cs) begin
-        if(is_sending) begin
-            miso <= data_in[output_data_bit_counter];
-            output_data_bit_counter <= output_data_bit_counter + 1;
-        end else begin
-            data_buffer <= {mosi, data_buffer[`INSTRUCTION_WIDTH-1:1]}; // Shift in new bit
-            bit_counter <= bit_counter + 1;
-        end
+        reset_data <= 0;
     end else begin
-        bit_counter <= 0;
-       output_data_bit_counter <=0;
-       
-        //data_ready <= 0;
+        // end
+        if (bit_counter == `INSTRUCTION_WIDTH-1)
+            bit_counter <= 0;
+        if (!cs) begin
+            if(is_sending) begin
+                miso <= data_in[output_data_bit_counter];
+                output_data_bit_counter <= output_data_bit_counter + 1;
+            end else begin
+                data_buffer <= {mosi, data_buffer[`INSTRUCTION_WIDTH-1:1]}; // Shift in new bit
+                // if (bit_counter == `INSTRUCTION_WIDTH) begin
+                //     bit_counter <= 0; 
+                // end else
+                if (bit_counter <`INSTRUCTION_WIDTH-1)
+                    bit_counter <= bit_counter + 1;
+            end
+        end else begin
+            bit_counter <= 0;
+            //data_ready <= 0;
+            //is_sending <= 0;
+        end
     end
 end
 
@@ -64,14 +71,16 @@ always @(posedge clk or negedge rst_n) begin
         end
         if(is_sending && output_data_bit_counter == `ACC_WIDTH*`NN) begin
             is_sending <= 0;
+            //output_data_bit_counter <= 0;
         end
-        if(bit_counter == `INSTRUCTION_WIDTH) begin
-            data_ready <=1;
+        if(bit_counter == 0 && !data_ready) begin
+            data_ready <=1; 
+            //bit_counter = 0; // Reset bit counter after full instruction is received
         end else begin
             data_ready <= 0;
         end
     end
 end
 
-assign data_buffer_output = data_ready? data_buffer : 0;
+assign data_buffer_output = (data_ready)? data_buffer : 0;
 endmodule
