@@ -1,11 +1,11 @@
-# 🧠 Mini-TPU: A Tiny Tapeout-Based Systolic Array Accelerator
+# 🧠 Mini-TPU v2: A Tiny Tapeout-Based Systolic Array Accelerator with SPI support for instruction/memory fetch
 
 [![](../../workflows/gds/badge.svg)](../../workflows/gds)
 [![](../../workflows/docs/badge.svg)](../../workflows/docs)
 [![](../../workflows/test/badge.svg)](../../workflows/test)
 [![](../../workflows/fpga/badge.svg)](../../workflows/fpga)
 
-This project implements a **Mini Tensor Processing Unit (Mini-TPU)** on the **Tiny Tapeout** open-source ASIC platform. It features a compact 4×4 systolic array optimized for efficient **matrix multiplication**, making it ideal for resource-constrained AI inference tasks.
+This project implements a **Mini Tensor Processing Unit (Mini-TPU)** on the **Tiny Tapeout** open-source ASIC platform. It features a compact 3×3 systolic array optimized for efficient **matrix multiplication**, making it ideal for resource-constrained AI inference tasks.
 
 > ✨ Built using [Tiny Tapeout](https://tinytapeout.com) and [Skywater 130nm PDK](https://skywater-pdk.readthedocs.io)!
 
@@ -13,12 +13,12 @@ This project implements a **Mini Tensor Processing Unit (Mini-TPU)** on the **Ti
 
 ## 🔍 Project Overview
 
-The Mini-TPU is designed for **educational** and **exploratory** purposes. Despite the severe area constraints (~160µm × 100µm), it demonstrates:
+The Mini-TPU v2 is designed for **educational** and **exploratory** purposes. Despite the severe area constraints (~160µm × 100µm), it demonstrates:
 
-- A fully functional 4×4 **systolic array** of 8-bit MAC units
+- A fully functional 3×3 **systolic array** of 8-bit MAC units
 - An **output-stationary dataflow**
 - Custom instruction set (`LOAD`, `RUN`, `STORE`)
-- **On-chip dual memory banks** for activations and weights
+- **Off-chip instructions/memory fetch through SPI** for activations and weights..
 - A lightweight **control**
 
 ---
@@ -31,8 +31,8 @@ Optimise this Mini-TPU to fit in the TT Tile of 160x100um^2
 
 ## 🧱 System Architecture
 
-- `pe.v`: Single Processing Element (8-bit MAC)
-- `array.v`: 4x4 systolic array
+- `pe.v`: Single Processing Element (4-bit MAC)
+- `array.v`: 3x43 systolic array
 - `memory.v`: Two 4x4 on-chip memories (A and B)
 - `control.v`: Control unit to execute instructions
 - `tpu_top.v`: System integration module
