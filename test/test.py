@@ -15,7 +15,7 @@ from cocotb.triggers  import RisingEdge, Timer
 # ui_in[2]: sck
 # uio_out[0]: miso
 # ui_out : result
-
+##
 # Instruction Encoding
 OP_RUN, OP_LOAD, OP_STORE = 0b01, 0b10, 0b11
 
