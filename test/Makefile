@@ -2,7 +2,7 @@
  # See https://docs.cocotb.org/en/stable/quickstart.html for more info
  
  # defaults
- SIM ?= verilator
+ SIM ?= icarus
  TOPLEVEL_LANG ?= verilog
  SRC_DIR = $(PWD)/../src
  PROJECT_SOURCES = tpu_interface.v spi.v tpu.v control.v memory.v array.v pe.v tt_um_tpu.v
@@ -31,7 +31,7 @@
  endif
  
  # Allow sharing configuration between design and testbench via `include`:
- COMPILE_ARGS 		+= -I$(SRC_DIR) --timing
+ COMPILE_ARGS 		+= -I$(SRC_DIR)
  
  # Include the testbench sources:
  VERILOG_SOURCES += $(PWD)/tb.v
