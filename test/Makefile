@@ -2,7 +2,7 @@
  # See https://docs.cocotb.org/en/stable/quickstart.html for more info
  
  # defaults
- SIM ?= icarus
+ SIM ?= verilator
  TOPLEVEL_LANG ?= verilog
  SRC_DIR = $(PWD)/../src
  PROJECT_SOURCES = tpu_interface.v spi.v tpu.v control.v memory.v array.v pe.v tt_um_tpu.v
@@ -31,7 +31,7 @@
  endif
  
  # Allow sharing configuration between design and testbench via `include`:
- COMPILE_ARGS 		+= -I$(SRC_DIR)
+ COMPILE_ARGS 		+= -I$(SRC_DIR) --timing
  
  # Include the testbench sources:
  VERILOG_SOURCES += $(PWD)/tb.v
@@ -39,6 +39,7 @@
  
  # MODULE is the basename of the Python test file
  MODULE = test
+
  
  # include cocotb's make rules to take care of the simulator setup
  include $(shell cocotb-config --makefiles)/Makefile.sim

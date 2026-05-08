@@ -26,7 +26,9 @@ module tb ();
   wire VPWR = 1'b1;
   wire VGND = 1'b0;
 `endif
+  wire sck;
 
+  assign sck = ui_in[2]; // Assuming SCLK is connected to ui_in[2]
   // Replace tt_um_example with your module name:
   tt_um_tpu user_project (
 
