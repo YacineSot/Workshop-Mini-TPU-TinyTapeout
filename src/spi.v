@@ -44,14 +44,14 @@ always @(posedge sclk or negedge rst_n) begin
             if(is_sending) begin
                 miso <= data_in[output_data_bit_counter];
                 output_data_bit_counter <= output_data_bit_counter + 1;
-            end else begin
-                data_buffer <= {mosi, data_buffer[`INSTRUCTION_WIDTH-1:1]}; // Shift in new bit
-                // if (bit_counter == `INSTRUCTION_WIDTH) begin
-                //     bit_counter <= 0; 
-                // end else
-                if (bit_counter <`INSTRUCTION_WIDTH-1)
-                    bit_counter <= bit_counter + 1;
             end
+            data_buffer <= {mosi, data_buffer[`INSTRUCTION_WIDTH-1:1]}; // Shift in new bit
+            // if (bit_counter == `INSTRUCTION_WIDTH) begin
+            //     bit_counter <= 0; 
+            // end else
+            if (bit_counter <`INSTRUCTION_WIDTH-1)
+                bit_counter <= bit_counter + 1;
+            
         end else begin
             bit_counter <= 0;
             //data_ready <= 0;

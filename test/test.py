@@ -21,7 +21,7 @@ OP_RUN, OP_LOAD, OP_STORE = 0b01, 0b10, 0b11
 
 def make_instr(op, mem_sel=0, row=0, col=0, imm=0):
     return ((op & 3) << 10) | ((mem_sel & 1) << 9) | \
-           ((row & 3) << 6) | ((col & 3) << 2) | (imm & 0xf)
+           ((row & 3) << 6) | ((col & 3) << 4) | (imm & 0xf)
 
 
 async def await_for_data_received(dut):
@@ -49,15 +49,16 @@ async def send_instr(dut, instr):
     dut.ui_in.value = int(dut.ui_in.value) & 0xf9 # Ensure CS=1
     await RisingEdge(dut.clk)  # CS=1 
     spi = dut.user_project.uut_tpu_interface.uut_spi
-    # tpu = dut.user_project.uut_tpu_interface.uut_tpu
+    tpu = dut.user_project.uut_tpu_interface.uut_tpu
     #print (f"CS state: {dut.user_project.uut_tpu_interface.uut_spi.cs.value}")
     for i in range(12):
         bit = ((instr >> i) & 1) | 4
         dut.ui_in.value = (int(dut.ui_in.value) & 0xfa) | bit  # mosi
         await RisingEdge(dut.clk)  #  sck = 1
         await RisingEdge(dut.clk)  #  sck  = 1
-        if spi.is_sending.value:
-            await await_for_data_received(dut)
+        if spi.is_sending.value and int(spi.output_data_bit_counter.value) == 0:
+            print (f"Sending data from pe array: {int(spi.data_in.value):x}")
+        #     await await_for_data_received(dut)
         # print(f"Sent bit {i}: {bit&1}, CS={spi.cs.value}, SCK={spi.sclk.value}, bit_counter={int(spi.bit_counter.value)}")
         dut.ui_in.value = int(dut.ui_in.value) & 0xfb  # sclk=0
         # if spi.data_ready.value:
@@ -92,22 +93,41 @@ def matmul_ref(a, b):
             c[i][j] = sum(a[i][k] * b[k][j] for k in range(n)) & 0xf
     return c
 
+def read_mem_array(mem_array):
+    return [[int(mem_array[r][c]) for c in range(3)] for r in range(3)]
+
 # LOAD A、B
 async def load_matrices(dut, a, b):
     for r in range(3):
         for c in range(3):
-            await send_instr(dut, make_instr(OP_LOAD, 0, r, c, a[r][c]))
+            inst = make_instr(OP_LOAD, 0, r, c, a[r][c])
+            # print(f"Loading A[{r}][{c}]={a[r][c]} into TPU Memory using isntruction: {inst:012b}")
+            await send_instr(dut, inst)
+    
+    
     for r in range(3):
         for c in range(3):
-            await send_instr(dut, make_instr(OP_LOAD, 1, r, c, b[c][r]))
+            inst = make_instr(OP_LOAD, 1, r, c, b[r][c])
+            # print(f"Loading B[{r}][{c}]={b[r][c]} into TPU Memory using isntruction: {inst:012b}")
+            await send_instr(dut, inst)
+    # memory_a = dut.user_project.uut_tpu_interface.uut_tpu.memory_a.mem
+    # memory_b = dut.user_project.uut_tpu_interface.uut_tpu.memory_b.mem
+
+    # print(f"Loaded Matrix A in TPU Memory: {read_mem_array(memory_a.value)} vs Expected: {a}")
+    # print(f"Loaded Matrix B in TPU Memory: {read_mem_array(memory_b.value)} vs Expected: {b}")
 
 # STORE
 async def read_matrix(dut):
     out = [[0]*3 for _ in range(3)]
+    tpu = dut.user_project.uut_tpu_interface.uut_tpu
     for r in range(3):
         for c in range(3):
-            await send_instr(dut, make_instr(OP_STORE, 0, r, c))
-            await Timer(1, units="ns")        # 
+            instruction = make_instr(OP_STORE, 0, r, c)
+            await send_instr(dut, instruction)
+            # print(f"instruction loaded into the tpu is: {int(tpu.instruction.value):012b} vs Expected: {instruction:012b} store A[{r}][{c}] to output")
+            # await RisingEdge(dut.clk)  # Wait for the instruction to be processed
+            # await RisingEdge(dut.clk)  # Wait for the instruction to be processed
+            #await Timer(1, units="ns")        # 
             out[r][c] = int(dut.uo_out.value)
     return out
 
@@ -152,6 +172,8 @@ async def generate_clock(dut, bit_index, period_ns):
 @cocotb.test()
 async def Test_TPU(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    #dbg_obj = {"is_printed": 0}
+    #dut.is_printed = 0
     #ui_in_view = NonHierarchyIndexableObject(dut.ui_in)
     #cocotb.start_soon(Clock(dut.sck, 20, units="ns").start())  # sck
     #cocotb.start_soon(generate_clock(dut, bit_index=2, period_ns=20))
@@ -171,7 +193,7 @@ async def Test_TPU(dut):
 
     I = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-    zero = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    zero = [[10, 10, 10], [10, 10, 10], [10, 10, 10]]
 
     await test_and_log(I, zero)
 
